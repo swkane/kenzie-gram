@@ -16,18 +16,7 @@ app.get('/', (req, res) => {
     let feed = ``;
     fs.readdir(path, function(err, items) {
         console.log(items);
-        for (let i = 0; i < items.length; i++) {
-            feed += `<img src=/uploads/${items[i]} height=150px><br />`;
-        }
-        res.send(
-            `<h1>Welcome to Kenziegram</h1>
-            <form action="/upload" method="post" enctype="multipart/form-data">
-                <input type="file" name="image" />
-                <input type="submit" />
-            </form>
-            ${feed} 
-            `
-        );
+        res.render("index", { items });
     })
 });
 
