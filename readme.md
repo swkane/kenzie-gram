@@ -1,3 +1,5 @@
+# Welcome to KenzieGram!
+
 # TODOS / BUGS
 
 - Bug: Randomly the client will reset the timestamp to 0 and ask for all the images again and append them. There is no observable pattern
