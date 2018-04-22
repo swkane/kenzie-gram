@@ -7,6 +7,6 @@ html
         form(action="/upload" method="post" enctype="multipart/form-data")
             input(type="file" name="image")
             input(type="submit")
-        each val in items
+        each val in files
            img(src="/uploads/" + val height="150px" width="150px")
            br
