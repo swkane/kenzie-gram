@@ -8,6 +8,5 @@ html
             input(type="file" name="image")
             input(type="submit")
         each val in files
-           img(src="/uploads/" + val height="150px" width="150px")
-           br
+           img(src="/uploads/" + val)
         script(src="client.pug.js")
