@@ -23,7 +23,7 @@ const uploadDir = path.join(__dirname, "public", "uploads");
 app.get('/', (req, res) => {
     let feed = ``;
     let files = fs.readdir(uploadDir, function(err, files) {
-        console.log(files);
+        console.log("all files", files);
         for (let i = 0; i < files.length; i++) {
             var modified = fs.statSync(path.join(uploadDir, files[i])).mtimeMs;
             console.log(modified);
@@ -38,7 +38,6 @@ app.post('/latest', (req, res) => {
         timestamp: 0
     };
     let files = fs.readdir(uploadDir, function(err, files) {
-        console.log(files);
         for (let i = 0; i < files.length; i++) {
             var modified = fs.statSync(path.join(uploadDir, files[i])).mtimeMs;
             if (modified > req.body.after) {
@@ -48,6 +47,8 @@ app.post('/latest', (req, res) => {
                 }
             }
         }
+        console.log("response: ", response);
+        
         res.send(response);
     });
 });
