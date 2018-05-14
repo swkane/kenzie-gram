@@ -27,10 +27,6 @@ app.get('/', (req, res) => {
         for (let i = 0; i < files.length; i++) {
             var modified = fs.statSync(path.join(uploadDir, files[i])).mtimeMs;
             console.log(modified);
-            // possibly to let the client know initially what the timestamp of the last photo is
-            // if (modified > lat) {
-            //     lat = modified;
-            // }
         }
         res.render("index", { files });
     });
@@ -45,6 +41,7 @@ app.post('/latest', (req, res) => {
     // the reason we have to pull latestResponse out of the request handler but reset images, is because we do not want to reset the timestamp every time, but we do want to clear out the images
     latestResponse.images = [];
     let files = fs.readdir(uploadDir, function(err, files) {
+        // could also use forEach or filter
         for (let i = 0; i < files.length; i++) {
             var modified = fs.statSync(path.join(uploadDir, files[i])).mtimeMs;
             if (modified > req.body.after) {
@@ -65,7 +62,7 @@ app.post('/upload', uploads.single('image'), function(req, res, next) {
     res.send(`
         <h1>Uploaded File</h1>
         <a href="/"><button>Back<button></a><br />
-        <img src=uploads/${req.file.filename} height=100px>
+        <img src=uploads/${req.file.filename} height=150px>
     `);
 });
 

@@ -1,16 +1,16 @@
 console.log('hello');
 
 let failedAttempts = 0;
-let beginningTimeStamp = Date.now();
+let clientTimeStamp = Date.now();
 
-function fetchImages(latestTimestamp = beginningTimeStamp) {
+function fetchImages() {
     const postRequestOptions = {
         method: "POST",
         headers: new Headers({
             "Content-Type": "application/json"
         }),
         body: JSON.stringify({
-            after: latestTimestamp
+            after: clientTimeStamp
         })
     }
     fetch('/latest', postRequestOptions)
@@ -18,7 +18,7 @@ function fetchImages(latestTimestamp = beginningTimeStamp) {
         .then(responseData => {
             failedAttempts = 0;
             console.log(responseData);
-            latestTimestamp = responseData.timestamp;
+            clientTimeStamp = responseData.timestamp;
             for (let i = 0; i < responseData.images.length; i++) {
                 let newImage = document.createElement('img');
                 newImage.src = `uploads/${responseData.images[i]}`;
@@ -35,7 +35,6 @@ function fetchImages(latestTimestamp = beginningTimeStamp) {
                 alert('Connection Lost');
             }
         });
-    setTimeout(() => fetchImages(latestTimestamp), 5000);
 }
+setInterval(() => fetchImages(), 5000);
 
-fetchImages(beginningTimeStamp);
