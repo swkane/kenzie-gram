@@ -9,6 +9,8 @@ app.use(express.json());
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
+let PORT = process.env.PORT || 3000;
+
 const uploaded_files = [];
 
 const uploads = multer({
@@ -67,6 +69,6 @@ app.post('/upload', uploads.single('image'), function(req, res, next) {
 });
 
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
     console.log("oh this server is running alright");
 });
