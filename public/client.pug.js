@@ -1,5 +1,3 @@
-console.log('hello');
-
 let failedAttempts = 0;
 let clientTimeStamp = Date.now();
 
