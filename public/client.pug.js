@@ -42,7 +42,7 @@ function photoUpload() {
     console.log('foo');
     const files = document.getElementById('file-input').files;
     const file = files[0];
-    file == null ? alert('No file selected') : getSignedRequest(file);
+    !file ? alert('No file selected') : getSignedRequest(file);
 }
 
 function getSignedRequest(file) {
