@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+var aws = require('aws-sdk')
+var multerS3 = require('multer-s3')
 const app = express();
 
 app.use(express.static('./public'));
@@ -13,10 +15,21 @@ let PORT = process.env.PORT || 3000;
 
 const uploaded_files = [];
 
+var s3 = new aws.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+})
+
 const uploads = multer({
-    storage: multer.diskStorage({
-        destination: (req, file, cb) => cb(null, path.join(__dirname, 'public', 'uploads')),
-        filename: (req, file, cb) => cb(null, file.originalname)
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.S3_BUCKET,
+        metadata: function (req, file, cb) {
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString())
+        }
     })
 });
 
@@ -59,6 +72,7 @@ app.post('/latest', (req, res) => {
 });
 
 app.post('/upload', uploads.single('image'), function(req, res, next) {
+    console.log(req);
     console.log(`Uploaded: ${req.file.filename}`);
     uploaded_files.push(req.file.filename);
     res.send(`
@@ -70,5 +84,5 @@ app.post('/upload', uploads.single('image'), function(req, res, next) {
 
 
 app.listen(PORT, () => {
-    console.log("oh this server is running alright");
+    console.log(`connected to http://localhost:${PORT}`);
 });
