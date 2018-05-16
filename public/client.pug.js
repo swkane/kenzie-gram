@@ -60,7 +60,9 @@ function uploadFile(file, signedRequest, url) {
     fetch(signedRequest, {
         method: 'PUT',
         body: file,
-        "Content-Type": "application/json"
+        headers: {
+            'x-amz-acl': 'public-read'
+        }
     })
     .then( r => {
         r.ok ? console.log('successfully uploaded') : console.log('failed upload');
