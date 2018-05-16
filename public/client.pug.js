@@ -59,7 +59,8 @@ function getSignedRequest(file) {
 function uploadFile(file, signedRequest, url) {
     fetch(signedRequest, {
         method: 'PUT',
-        body: file
+        body: file,
+        "Content-Type": "application/json"
     })
     .then( r => {
         r.ok ? console.log('successfully uploaded') : console.log('failed upload');
