@@ -13,8 +13,6 @@ app.set('views', path.join(__dirname, 'views'));
 
 let PORT = process.env.PORT || 3000;
 
-const uploaded_files = [];
-
 var s3 = new aws.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
@@ -52,33 +50,31 @@ let latestResponse = {
     timestamp: 0
 };
 
-app.post('/latest', (req, res) => {
-    // the reason we have to pull latestResponse out of the request handler but reset images, is because we do not want to reset the timestamp every time, but we do want to clear out the images
-    latestResponse.images = [];
-    let files = fs.readdir(uploadDir, function(err, files) {
-        // could also use forEach or filter
-        for (let i = 0; i < files.length; i++) {
-            var modified = fs.statSync(path.join(uploadDir, files[i])).mtimeMs;
-            if (modified > req.body.after) {
-                latestResponse.images.push(files[i]);
-                if (modified > latestResponse.timestamp) {
-                    latestResponse.timestamp = modified;
-                }
-            }
-        }
-        console.log("response: ", latestResponse);
-        res.send(latestResponse);
-    });
-});
+// app.post('/latest', (req, res) => {
+//     // the reason we have to pull latestResponse out of the request handler but reset images, is because we do not want to reset the timestamp every time, but we do want to clear out the images
+//     latestResponse.images = [];
+//     let files = fs.readdir(uploadDir, function(err, files) {
+//         // could also use forEach or filter
+//         for (let i = 0; i < files.length; i++) {
+//             var modified = fs.statSync(path.join(uploadDir, files[i])).mtimeMs;
+//             if (modified > req.body.after) {
+//                 latestResponse.images.push(files[i]);
+//                 if (modified > latestResponse.timestamp) {
+//                     latestResponse.timestamp = modified;
+//                 }
+//             }
+//         }
+//         console.log("response: ", latestResponse);
+//         res.send(latestResponse);
+//     });
+// });
 
 app.post('/upload', uploads.single('image'), function(req, res, next) {
     console.log(req);
-    console.log(`Uploaded: ${req.file.filename}`);
-    uploaded_files.push(req.file.filename);
     res.send(`
         <h1>Uploaded File</h1>
         <a href="/"><button>Back<button></a><br />
-        <img src=uploads/${req.file.filename} height=150px>
+        <img src=uploads/${req.file.location} height=150px>
     `);
 });
 

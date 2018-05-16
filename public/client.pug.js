@@ -36,5 +36,5 @@ function fetchImages() {
             }
         });
 }
-setInterval(() => fetchImages(), 5000);
+// setInterval(() => fetchImages(), 5000);
 
