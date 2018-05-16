@@ -12,10 +12,8 @@ app.set('views', path.join(__dirname, 'views'));
 
 let PORT = process.env.PORT || 3000;
 
-let s3 = new aws.S3({
-    accessKeyId: process.env.S3_Key,
-    secretAccessKey: process.env.S3_SECRET
-})
+const S3_BUCKET = process.env.S3_BUCKET; 
+
 
 const uploaded_files = [];
 
@@ -64,15 +62,47 @@ app.post('/latest', (req, res) => {
     });
 });
 
-app.post('/upload', uploads.single('image'), function(req, res, next) {
-    console.log(`Uploaded: ${req.file.filename}`);
-    uploaded_files.push(req.file.filename);
-    res.send(`
-        <h1>Uploaded File</h1>
-        <a href="/"><button>Back<button></a><br />
-        <img src=uploads/${req.file.filename} height=150px>
-    `);
-});
+// Upload file into uploads folder
+// app.post('/upload', uploads.single('image'), function(req, res, next) {
+//     console.log(`Uploaded: ${req.file.filename}`);
+//     uploaded_files.push(req.file.filename);
+//     res.send(`
+//         <h1>Uploaded File</h1>
+//         <a href="/"><button>Back<button></a><br />
+//         <img src=uploads/${req.file.filename} height=150px>
+//     `);
+// });
+
+// generate and return signed request
+
+app.get('/sign-s3', (req, res) => {
+    const s3 = new aws.S3();
+    const fileName = req.query['file-name'];
+    const fileType = req.query['file-type'];
+    const s3Params = {
+        Bucket: S3_BUCKET,
+        Key: fileName,
+        Expires: 60,
+        ContentType: fileType,
+        ACL: 'public-read'
+    };
+
+    s3.getSignedUrl('putObject', s3Params, (err, data) => {
+        if (err) {
+            console.log(err);
+            return res.end();
+        }
+        const returnData = {
+            signedRequest: data,
+            url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+        }
+        res.write(JSON.stringify(returnData));
+        res.end();
+    })
+})
+
+// Upload file into S3
+// app.post('/upload', )
 
 
 app.listen(PORT, () => {

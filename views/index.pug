@@ -4,9 +4,10 @@ html
         link(rel="stylesheet", href="style.css", type="text/css")
     body
         h1= "KenzieGram"
-        form(action="/upload" method="post" enctype="multipart/form-data")
-            input(type="file" name="image")
-            input(type="submit")
+        //- form(action="/upload" method="post" enctype="multipart/form-data")
+        input(type="file" id="file-input" name="image")
+            //- input(type="submit")
+        button(onclick="photoUpload()") Upload
         each val in files
            img(src="/uploads/" + val)
         script(src="client.pug.js")

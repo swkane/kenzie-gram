@@ -36,3 +36,32 @@ function fetchImages() {
 }
 setInterval(() => fetchImages(), 5000);
 
+// New Event handler for uploading file to S3
+
+function photoUpload() {
+    console.log('foo');
+    const files = document.getElementById('file-input').files;
+    const file = files[0];
+    file == null ? alert('No file selected') : getSignedRequest(file);
+}
+
+function getSignedRequest(file) {
+    console.log('bar')
+    fetch(`/sign-s3?file-name=${file.name}&file-type=${file.type}`)
+    .then( r => {
+        return r.json()
+    })
+    .then( response => {
+        uploadFile(file, response.signedRequest, response.url)
+    })
+}
+
+function uploadFile(file, signedRequest, url) {
+    fetch(signedRequest, {
+        method: 'PUT',
+        body: file
+    })
+    .then( r => {
+        r.ok ? console.log('successfully uploaded') : console.log('failed upload');
+    })
+}
